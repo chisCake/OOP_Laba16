@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 using AngleSharp;
 using AngleSharp.Io;
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
+// ReSharper disable AccessToModifiedClosure
 
 namespace OOP_Laba16 {
 	class Program {
-		static readonly List<Action> tasks = new List<Action> {
-			new Action(Task1),
-			new Action(Task2),
-			new Action(Task3_4),
-			new Action(Task5),
-			new Action(Task6),
-			new Action(Task7),
-			new Action(Task8)
+		static readonly List<Action> Tasks = new List<Action> {
+			Task1,
+			Task2,
+			Task3_4,
+			Task5,
+			Task6,
+			Task7,
+			Task8
 		};
 
 		static void Main() {
@@ -32,7 +34,7 @@ namespace OOP_Laba16 {
 					"\n0 - выход" +
 					"\nВыберите действие: "
 					);
-				if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > tasks.Count) {
+				if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > Tasks.Count) {
 					Console.WriteLine("Нет такого действия");
 					Console.ReadKey();
 					Console.Clear();
@@ -42,7 +44,7 @@ namespace OOP_Laba16 {
 					Console.WriteLine("Выход...");
 					Environment.Exit(0);
 				}
-				tasks[choice - 1]();
+				Tasks[choice - 1]();
 				Console.ReadKey();
 				Console.Clear();
 			}
@@ -95,12 +97,12 @@ namespace OOP_Laba16 {
 		}
 
 		static void Task2() {
-			var Eratosfen = new Action<object, CancellationToken>(PrimeNumbers.Eratosfen);
+			var eratosfen = new Action<object, CancellationToken>(PrimeNumbers.Eratosfen);
 
 			var tokenSrc = new CancellationTokenSource();
-			CancellationToken token = tokenSrc.Token;
+			var token = tokenSrc.Token;
 
-			var task = new Task(() => Eratosfen(1000000, token));
+			var task = new Task(() => eratosfen(1000000, token));
 			task.Start();
 			Console.WriteLine("ID текущей задачи: " + task.Id);
 

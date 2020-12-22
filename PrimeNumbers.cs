@@ -1,26 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+// ReSharper disable CollectionNeverQueried.Local
 
 namespace OOP_Laba16 {
 	static class PrimeNumbers {
 		public static void Eratosfen(object data) {
-			int max = (int)data;
+			var max = (int)data;
 			var primes = new List<int>();
 			for (int i = 1; i < max; i++)
 				primes.Add(i);
 			DoEratosfen();
 
-			int Step(int num, int startFrom) {
+			void Step(int num, int startFrom) {
 				int i = startFrom + 1;
-				int Removed = 0;
 				while (i < primes.Count)
 					if (primes[i] % num == 0) {
 						primes.RemoveAt(i);
-						Removed++;
 					}
 					else
 						i++;
-				return Removed;
 			}
 
 			void DoEratosfen() {
@@ -54,21 +52,18 @@ namespace OOP_Laba16 {
 				primes.Add(i);
 			DoEratosfen();
 
-			int Step(int num, int startFrom) {
+			void Step(int num, int startFrom) {
 				int i = startFrom + 1;
-				int Removed = 0;
 				while (i < primes.Count) {
 					// Отмена тут
 					if (token.IsCancellationRequested)
 						break;
 					if (primes[i] % num == 0) {
 						primes.RemoveAt(i);
-						Removed++;
 					}
 					else
 						i++;
 				}
-				return Removed;
 			}
 
 			void DoEratosfen() {

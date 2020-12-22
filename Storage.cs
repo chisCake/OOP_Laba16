@@ -5,108 +5,122 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OOP_Laba16 {
-	class Storage {
-		public BlockingCollection<Product> Products { get; private set; }
-
-		public Storage() {
+namespace OOP_Laba16
+{
+	class Storage
+	{
+		public Storage()
+		{
 			Products = new BlockingCollection<Product>();
 		}
 
-		public void Add(Product product) {
+		public BlockingCollection<Product> Products { get; private set; }
+
+		public void Add(Product product)
+		{
 			Products.Add(product);
 			Console.WriteLine($"+ {product.Name}\n");
 			PrintProducts();
 		}
 
-		public Product Take() {
+		public Product Take()
+		{
 			var product = Products.Take();
-			if (product != null) {
+			if (product != null)
+			{
 				Console.WriteLine($"- {product.Name}\n");
 				PrintProducts();
 			}
+
 			return product;
 		}
 
-		public void PrintProducts() {
+		public void PrintProducts()
+		{
 			Console.Clear();
-			foreach (var item in Products.OrderBy(item => item.ID))
-				Console.WriteLine($"{item.Name, -20} {item.ID}");
+			foreach (var item in Products.OrderBy(item => item.Id))
+				Console.WriteLine($"{item.Name,-20} {item.Id}");
 		}
 	}
 
-	class Product {
-		public string Name { get; }
-		public int ID { get; }
+	class Product
+	{
+		static readonly Random Rdnm = new Random();
 
-		public Product(string name) {
+		public Product(string name)
+		{
 			Name = name;
-			ID = rdnm.Next(100000, 1000000);
+			Id = Rdnm.Next(100000, 1000000);
 		}
 
-		public override string ToString() => $"{Name} {ID}";
+		public string Name { get; }
+		public int Id { get; }
 
-		static readonly Random rdnm = new Random();
+		public override string ToString() => $"{Name} {Id}";
 	}
 
-	class Supplier {
-		public string Product { get; set; }
-		public int Interval { get; set; }
-		public List<Storage> Storages { get; private set; }
-		public bool NowSupplies { get; private set; }
-		Task task;
+	class Supplier
+	{
+		Task _task;
 
-		public Supplier(string product, int interval, params Storage[] storages) {
+		public Supplier(string product, int interval, params Storage[] storages)
+		{
 			Product = product;
 			Interval = interval;
 			Storages = new List<Storage>(storages);
 		}
 
-		public void AddStorage(Storage storage) => Storages.Add(storage);
+		public string Product { get; set; }
+		public int Interval { get; set; }
+		public List<Storage> Storages { get; private set; }
+		public bool NowSupplies { get; private set; }
 
-		public void RemoveStorage(Storage storage) => Storages.Remove(storage);
-
-		public void StartDeliveries() {
+		public void StartDeliveries()
+		{
 			NowSupplies = true;
-			task = new Task(() => {
-				while (NowSupplies) {
+			_task = new Task(() =>
+			{
+				while (NowSupplies)
+				{
 					Storages.ForEach(storage => storage.Add(new Product(Product)));
 					Thread.Sleep(Interval);
 				}
 			});
-			task.Start();
+			_task.Start();
 		}
 
-		public void FinishDeliveries() {
-			NowSupplies = false;
-		}
+		public void FinishDeliveries() => NowSupplies = false;
 	}
 
-	class Consumer {
-		public int Interval { get; set; }
-		public Storage Storage { get; private set; }
-		public bool NowBuying { get; private set; }
-		Task task;
+	class Consumer
+	{
+		Task _task;
 
-		public Consumer(int interval, Storage storage) {
+		public Consumer(int interval, Storage storage)
+		{
 			Interval = interval;
 			Storage = storage;
 		}
 
-		public void StartBuying() {
+		public int Interval { get; set; }
+		public Storage Storage { get; private set; }
+		public bool NowBuying { get; private set; }
+
+		public void StartBuying()
+		{
 			NowBuying = true;
-			task = new Task(() => {
+			_task = new Task(() =>
+			{
 				Thread.Sleep(5000);
-				while (NowBuying) {
+				while (NowBuying)
+				{
 					Storage.Take();
 					Thread.Sleep(Interval);
 				}
 			});
-			task.Start();
+			_task.Start();
 		}
 
-		public void FinishBuying() {
-			NowBuying = false;
-		}
+		public void FinishBuying() => NowBuying = false;
 	}
 }
